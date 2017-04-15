@@ -23,6 +23,7 @@
 #pragma once
 
 namespace skylog {
+namespace base {
 
 template <typename ObserverMessageType>
 class IObserver {
@@ -34,4 +35,5 @@ class IObserver {
   virtual void Notify(const ObserverMessage& message) = 0;
 };
 
+}  // namespace base
 }  // namespace skylog
