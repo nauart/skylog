@@ -26,6 +26,7 @@
 #include <memory>
 
 namespace skylog {
+namespace base {
 
 template <typename ObserverType>
 class IObservable {
@@ -41,4 +42,5 @@ class IObservable {
   virtual void NotifyObservers(const ObserverMessage& message) = 0;
 };
 
+}  // namespace base
 }  // namespace skylog
