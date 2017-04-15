@@ -20,6 +20,19 @@
  * SOFTWARE.
  */
 
+#include <memory>
+#include <string>
+
+#include "base/observer.h"
+#include "base/observable.h"
+
 int main() {
+  std::shared_ptr<skylog::base::IObserver<std::string> > observer =
+      std::make_shared<skylog::base::Observer<std::string> >(nullptr);
+  std::shared_ptr<skylog::base::IObservable<skylog::base::IObserver<std::string> > > observable =
+      std::make_shared<skylog::base::Observable<skylog::base::IObserver<std::string> > >();
+  observable->AddObserver("observer", observer);
+  observable->NotifyObservers("message");
+
   return 0;
 }
