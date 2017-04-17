@@ -8,8 +8,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -49,7 +49,7 @@ class Observer : public IObserver<ObserverMessageType> {
       : service_()
       , work_(new boost::asio::io_service::work(service_))
       , thread_(new boost::thread(
-                    boost::bind(&boost::asio::io_service::run, &service_)))
+            boost::bind(&boost::asio::io_service::run, &service_)))
       , handler_(handler) {}
   ~Observer() {
     work_.reset();
@@ -64,8 +64,7 @@ class Observer : public IObserver<ObserverMessageType> {
   Observer& operator=(Observer&&) = default;
 
   void Notify(const ObserverMessage& message) final {
-    service_.post(boost::bind(
-                      &Handler::Handle, handler_, message));
+    service_.post(boost::bind(&Handler::Handle, handler_, message));
   }
 
  private:
