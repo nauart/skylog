@@ -22,15 +22,15 @@
 
 #pragma once
 
-#include <string>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/scoped_ptr.hpp>
 
-#include "core/iobserver.h"
+#include "base/iobserver.h"
 
 namespace skylog {
+namespace base {
 
 template <typename ObserverMessageType>
 class Observer : public IObserver<ObserverMessageType> {
@@ -63,7 +63,7 @@ class Observer : public IObserver<ObserverMessageType> {
   Observer(Observer&&) = default;
   Observer& operator=(Observer&&) = default;
 
-  void Notify(const ObserverMessage& message) override {
+  void Notify(const ObserverMessage& message) final {
     service_.post(boost::bind(
                       &Handler::Handle, handler_, message));
   }
@@ -75,4 +75,5 @@ class Observer : public IObserver<ObserverMessageType> {
   Handler* handler_;
 };
 
+}  // namespace base
 }  // namespace skylog

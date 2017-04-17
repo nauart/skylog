@@ -1,17 +1,27 @@
-sudo: required
-
-before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-  - sudo apt-get install libboost-all-dev
+sudo: false
 
 language: cpp
+
+cache:
+  apt: true
+
+addons:
+  apt:
+    sources:
+    - boost-latest
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - libboost-system1.54-dev
+    - libboost-thread1.54-dev
 
 compiler:
   - clang
   - gcc
+
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 
 script:
   - mkdir build

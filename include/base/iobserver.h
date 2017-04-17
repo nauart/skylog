@@ -22,23 +22,18 @@
 
 #pragma once
 
-#include <string>
-#include <memory>
-
 namespace skylog {
+namespace base {
 
-template <typename ObserverType>
-class IObservable {
+template <typename ObserverMessageType>
+class IObserver {
  public:
-  using ObserverMessage = typename ObserverType::ObserverMessage;
-  using ObserverPointer = std::shared_ptr<ObserverType>;
+  using ObserverMessage = ObserverMessageType;
 
-  virtual ~IObservable() {}
+  virtual ~IObserver() {}
 
-  virtual bool AddObserver(
-      const std::string& name, ObserverPointer observer) = 0;
-  virtual void RemoveObserver(const std::string& name) = 0;
-  virtual void NotifyObservers(const ObserverMessage& message) = 0;
+  virtual void Notify(const ObserverMessage& message) = 0;
 };
 
+}  // namespace base
 }  // namespace skylog

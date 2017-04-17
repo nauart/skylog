@@ -24,11 +24,12 @@
 
 #include <string>
 #include <map>
-#include <boost/thread/mutex.hpp>
+#include <mutex>
 
-#include "core/iobservable.h"
+#include "base/iobservable.h"
 
 namespace skylog {
+namespace base {
 
 template <typename ObserverType>
 class Observable : public IObservable<ObserverType> {
@@ -44,16 +45,16 @@ class Observable : public IObservable<ObserverType> {
   Observable& operator=(Observable&&) = default;
 
   bool AddObserver(
-      const std::string& name, ObserverPointer observer) override {
-    boost::mutex::scoped_lock lock(observers_map_mutex_);
+      const std::string& name, ObserverPointer observer) final {
+    std::unique_lock<std::mutex> lock(observers_map_mutex_);
     return observers_map_.emplace(name, observer).second;
   }
-  void RemoveObserver(const std::string& name) override {
-    boost::mutex::scoped_lock lock(observers_map_mutex_);
+  void RemoveObserver(const std::string& name) final {
+    std::unique_lock<std::mutex> lock(observers_map_mutex_);
     observers_map_.erase(name);
   }
-  void NotifyObservers(const ObserverMessage& message) override {
-    boost::mutex::scoped_lock lock(observers_map_mutex_);
+  void NotifyObservers(const ObserverMessage& message) final {
+    std::unique_lock<std::mutex> lock(observers_map_mutex_);
     for (auto& kv : observers_map_) {
       kv.second->Notify(message);
     }
@@ -61,7 +62,8 @@ class Observable : public IObservable<ObserverType> {
 
  private:
   std::map<std::string, ObserverPointer> observers_map_;
-  boost::mutex observers_map_mutex_;
+  std::mutex observers_map_mutex_;
 };
 
+}  // namespace base
 }  // namespace skylog
