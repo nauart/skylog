@@ -24,7 +24,7 @@
 
 #include <string>
 #include <fstream>
-#include <ctime>
+#include <chrono>
 
 #include "base/observer.h"
 
@@ -59,9 +59,14 @@ void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
       return;
   }
 
-  const std::time_t time_stamp = message.time();
-  file_stream_ << level_string << " ["
-               << std::asctime(std::localtime(&time_stamp)) << "] ["
+  const std::time_t time_stamp =
+      std::chrono::system_clock::to_time_t(message.time());
+  const std::size_t time_buffer_size = 50;
+  char time_buffer[time_buffer_size];
+  std::strftime(
+      time_buffer, time_buffer_size, "%x %X", std::localtime(&time_stamp));
+
+  file_stream_ << level_string << " [" << time_buffer << "] ["
                << "0x" << std::hex << message.thread_id() << "] "
                << message.file_name() << " " << message.function_name()
                << "::" << std::dec << message.line_number() << ": "

@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <string>
+#include <chrono>
 
 #include "base/observable.h"
 #include "appender/logger_message.h"
@@ -44,7 +45,7 @@ int main() {
 
   observable->NotifyObservers(
       skylog::appender::LoggerMessage(skylog::appender::LogLevel::LL_DEBUG,
-                                      std::time(0),
+                                      std::chrono::system_clock::now(),
                                       13,
                                       "test_file.cc",
                                       "TestFunction",
