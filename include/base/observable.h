@@ -39,8 +39,6 @@ class Observable : public IObservable<ObserverType> {
 
   Observable() = default;
   ~Observable() = default;
-  Observable(const Observable&) = delete;
-  Observable& operator=(const Observable&) = delete;
   Observable(Observable&&) = default;
   Observable& operator=(Observable&&) = default;
 
