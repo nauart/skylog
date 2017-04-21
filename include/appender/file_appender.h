@@ -23,44 +23,31 @@
 #pragma once
 
 #include <string>
-#include <map>
-#include <mutex>
+#include <fstream>
 
-#include "base/iobservable.h"
+#include "base/observer.h"
+#include "appender/logger_message.h"
 
 namespace skylog {
-namespace base {
+namespace appender {
 
-template <typename ObserverType>
-class Observable : public IObservable<ObserverType> {
+class FileAppender : public base::Observer<LoggerMessage>,
+                     public base::Observer<LoggerMessage>::Handler {
  public:
-  using ObserverMessage = typename IObservable<ObserverType>::ObserverMessage;
-  using ObserverPointer = typename IObservable<ObserverType>::ObserverPointer;
+  using AppenderMessage =
+      typename base::Observer<LoggerMessage>::ObserverMessage;
 
-  Observable() = default;
-  ~Observable() = default;
-  Observable(Observable&&) = default;
-  Observable& operator=(Observable&&) = default;
+  explicit FileAppender(const std::string& file_path);
+  ~FileAppender();
 
-  bool AddObserver(const std::string& name, ObserverPointer observer) final {
-    std::unique_lock<std::mutex> lock(observers_map_mutex_);
-    return observers_map_.emplace(name, observer).second;
-  }
-  void RemoveObserver(const std::string& name) final {
-    std::unique_lock<std::mutex> lock(observers_map_mutex_);
-    observers_map_.erase(name);
-  }
-  void NotifyObservers(const ObserverMessage& message) final {
-    std::unique_lock<std::mutex> lock(observers_map_mutex_);
-    for (auto& kv : observers_map_) {
-      kv.second->Notify(message);
-    }
-  }
+  FileAppender(FileAppender&&) = default;
+  FileAppender& operator=(FileAppender&&) = default;
 
  private:
-  std::map<std::string, ObserverPointer> observers_map_;
-  std::mutex observers_map_mutex_;
+  void Handle(const AppenderMessage& message) final;
+
+  std::ofstream file_stream_;
 };
 
-}  // namespace base
+}  // namespace appender
 }  // namespace skylog

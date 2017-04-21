@@ -58,8 +58,6 @@ class Observer : public IObserver<ObserverMessageType> {
     }
   }
 
-  Observer(const Observer&) = delete;
-  Observer& operator=(const Observer&) = delete;
   Observer(Observer&&) = default;
   Observer& operator=(Observer&&) = default;
 
