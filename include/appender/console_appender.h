@@ -23,16 +23,16 @@
 #pragma once
 
 #include "base/observer.h"
-#include "appender/logger_message.h"
+#include "message/log_message.h"
 
 namespace skylog {
 namespace appender {
 
-class ConsoleAppender : public base::Observer<LoggerMessage>,
-                        public base::Observer<LoggerMessage>::Handler {
+class ConsoleAppender : public base::Observer<message::LogMessage>,
+                        public base::Observer<message::LogMessage>::Handler {
  public:
   using AppenderMessage =
-      typename base::Observer<LoggerMessage>::ObserverMessage;
+      typename base::Observer<message::LogMessage>::ObserverMessage;
 
   ConsoleAppender();
   ~ConsoleAppender();

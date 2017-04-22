@@ -27,7 +27,7 @@
 #include <chrono>
 
 namespace skylog {
-namespace appender {
+namespace message {
 
 enum class LogLevel {
   LL_UNKNOWN = 0,
@@ -38,9 +38,9 @@ enum class LogLevel {
   LL_ERROR
 };
 
-class LoggerMessage {
+class LogMessage {
  public:
-  LoggerMessage()
+  LogMessage()
       : level_(LogLevel::LL_UNKNOWN)
       , time_()
       , thread_id_(0)
@@ -49,13 +49,13 @@ class LoggerMessage {
       , line_number_(0)
       , log_string_() {}
 
-  LoggerMessage(const LogLevel level,
-                const std::chrono::system_clock::time_point& time,
-                const std::uint32_t thread_id,
-                const std::string& file_name,
-                const std::string& function_name,
-                const std::uint32_t line_number,
-                const std::string& log_string)
+  LogMessage(const LogLevel level,
+             const std::chrono::system_clock::time_point& time,
+             const std::uint32_t thread_id,
+             const std::string& file_name,
+             const std::string& function_name,
+             const std::uint32_t line_number,
+             const std::string& log_string)
       : level_(level)
       , time_(time)
       , thread_id_(thread_id)
@@ -66,6 +66,22 @@ class LoggerMessage {
 
   LogLevel level() const {
     return level_;
+  }
+  std::string level_string() const {
+    switch (level_) {
+      case LogLevel::LL_TRACE:
+        return "TRACE";
+      case LogLevel::LL_DEBUG:
+        return "DEBUG";
+      case LogLevel::LL_INFO:
+        return "INFO ";
+      case LogLevel::LL_WARN:
+        return "WARN ";
+      case LogLevel::LL_ERROR:
+        return "ERROR";
+      default:
+        return std::string();
+    }
   }
   const std::chrono::system_clock::time_point& time() const {
     return time_;
@@ -96,5 +112,5 @@ class LoggerMessage {
   const std::string log_string_;
 };
 
-}  // namespace appender
+}  // namespace message
 }  // namespace skylog
