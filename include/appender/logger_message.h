@@ -24,7 +24,7 @@
 
 #include <cstdint>
 #include <string>
-#include <ctime>
+#include <chrono>
 
 namespace skylog {
 namespace appender {
@@ -50,7 +50,7 @@ class LoggerMessage {
       , log_string_() {}
 
   LoggerMessage(const LogLevel level,
-                const std::time_t time,
+                const std::chrono::system_clock::time_point& time,
                 const std::uint32_t thread_id,
                 const std::string& file_name,
                 const std::string& function_name,
@@ -67,7 +67,7 @@ class LoggerMessage {
   LogLevel level() const {
     return level_;
   }
-  std::time_t time() const {
+  const std::chrono::system_clock::time_point& time() const {
     return time_;
   }
   std::uint32_t thread_id() const {
@@ -88,7 +88,7 @@ class LoggerMessage {
 
  private:
   const LogLevel level_;
-  const std::time_t time_;
+  const std::chrono::system_clock::time_point time_;
   const std::uint32_t thread_id_;
   const std::string file_name_;
   const std::string function_name_;

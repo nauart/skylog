@@ -20,24 +20,20 @@
  * SOFTWARE.
  */
 
-#include "appender/file_appender.h"
+#include "appender/console_appender.h"
 
 #include <string>
-#include <fstream>
+#include <iostream>
 #include <chrono>
 
 #include "base/observer.h"
 
-skylog::appender::FileAppender::FileAppender(const std::string& file_path)
-    : base::Observer<AppenderMessage>(this), file_stream_(file_path) {}
+skylog::appender::ConsoleAppender::ConsoleAppender()
+    : base::Observer<AppenderMessage>(this) {}
 
-skylog::appender::FileAppender::~FileAppender() {}
+skylog::appender::ConsoleAppender::~ConsoleAppender() {}
 
-void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
-  if (!file_stream_.is_open()) {
-    return;
-  }
-
+void skylog::appender::ConsoleAppender::Handle(const AppenderMessage& message) {
   std::string level_string;
   switch (message.level()) {
     case LogLevel::LL_TRACE:
@@ -66,10 +62,10 @@ void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
   std::strftime(
       time_buffer, time_buffer_size, "%x %X", std::localtime(&time_stamp));
 
-  file_stream_ << level_string << " [" << time_buffer << "] ["
-               << "0x" << std::hex << message.thread_id() << "] "
-               << message.file_name() << " " << message.function_name()
-               << "::" << std::dec << message.line_number() << ": "
-               << message.log_string() << "\n";
-  file_stream_.flush();
+  std::cout << level_string << " [" << time_buffer << "] ["
+            << "0x" << std::hex << message.thread_id() << "] "
+            << message.file_name() << " " << message.function_name()
+            << "::" << std::dec << message.line_number() << ": "
+            << message.log_string() << "\n";
+  std::cout << std::flush;
 }
