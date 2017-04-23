@@ -22,10 +22,12 @@
 
 #pragma once
 
+#include <atomic>
+#include <memory>
+
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include "base/iobserver.h"
 
@@ -50,26 +52,39 @@ class Observer : public IObserver<ObserverMessageType> {
       , work_(new boost::asio::io_service::work(service_))
       , thread_(new boost::thread(
             boost::bind(&boost::asio::io_service::run, &service_)))
-      , handler_(handler) {}
+      , handler_(handler)
+      , is_running_(true) {}
   ~Observer() {
-    work_.reset();
-    if (thread_) {
-      thread_->join();
-    }
+    Stop();
   }
 
   Observer(Observer&&) = default;
   Observer& operator=(Observer&&) = default;
 
   void Notify(const ObserverMessage& message) final {
-    service_.post(boost::bind(&Handler::Handle, handler_, message));
+    if (is_running_) {
+      service_.post(boost::bind(&Handler::Handle, handler_, message));
+    }
+  }
+
+ protected:
+  void Stop() {
+    bool expected_value = true;
+    if (is_running_.compare_exchange_strong(expected_value, false)) {
+      work_.reset();
+      if (thread_) {
+        thread_->join();
+      }
+    }
   }
 
  private:
   boost::asio::io_service service_;
-  boost::scoped_ptr<boost::asio::io_service::work> work_;
-  boost::scoped_ptr<boost::thread> thread_;
+  std::unique_ptr<boost::asio::io_service::work> work_;
+  std::unique_ptr<boost::thread> thread_;
+
   Handler* handler_;
+  std::atomic_bool is_running_;
 };
 
 }  // namespace base

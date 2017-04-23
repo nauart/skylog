@@ -31,7 +31,9 @@
 skylog::appender::ConsoleAppender::ConsoleAppender()
     : base::Observer<AppenderMessage>(this) {}
 
-skylog::appender::ConsoleAppender::~ConsoleAppender() {}
+skylog::appender::ConsoleAppender::~ConsoleAppender() {
+  base::Observer<AppenderMessage>::Stop();
+}
 
 void skylog::appender::ConsoleAppender::Handle(const AppenderMessage& message) {
   const std::time_t time_stamp =

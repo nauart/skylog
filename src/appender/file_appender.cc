@@ -31,7 +31,9 @@
 skylog::appender::FileAppender::FileAppender(const std::string& file_path)
     : base::Observer<AppenderMessage>(this), file_stream_(file_path) {}
 
-skylog::appender::FileAppender::~FileAppender() {}
+skylog::appender::FileAppender::~FileAppender() {
+  base::Observer<AppenderMessage>::Stop();
+}
 
 void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
   if (!file_stream_.is_open()) {
