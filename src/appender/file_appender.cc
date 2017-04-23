@@ -38,27 +38,6 @@ void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
     return;
   }
 
-  std::string level_string;
-  switch (message.level()) {
-    case LogLevel::LL_TRACE:
-      level_string = "TRACE";
-      break;
-    case LogLevel::LL_DEBUG:
-      level_string = "DEBUG";
-      break;
-    case LogLevel::LL_INFO:
-      level_string = "INFO ";
-      break;
-    case LogLevel::LL_WARN:
-      level_string = "WARN ";
-      break;
-    case LogLevel::LL_ERROR:
-      level_string = "ERROR";
-      break;
-    default:
-      return;
-  }
-
   const std::time_t time_stamp =
       std::chrono::system_clock::to_time_t(message.time());
   const std::size_t time_buffer_size = 50;
@@ -66,7 +45,7 @@ void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
   std::strftime(
       time_buffer, time_buffer_size, "%x %X", std::localtime(&time_stamp));
 
-  file_stream_ << level_string << " [" << time_buffer << "] ["
+  file_stream_ << message.level_string() << " [" << time_buffer << "] ["
                << "0x" << std::hex << message.thread_id() << "] "
                << message.file_name() << " " << message.function_name()
                << "::" << std::dec << message.line_number() << ": "

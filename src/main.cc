@@ -25,32 +25,32 @@
 #include <chrono>
 
 #include "base/observable.h"
-#include "appender/logger_message.h"
+#include "message/log_message.h"
 #include "appender/file_appender.h"
 #include "appender/console_appender.h"
 
 int main() {
-  std::shared_ptr<skylog::base::IObserver<skylog::appender::LoggerMessage> >
+  std::shared_ptr<skylog::base::IObserver<skylog::message::LogMessage> >
       file_appender =
           std::make_shared<skylog::appender::FileAppender>("test_file.txt");
-  std::shared_ptr<skylog::base::IObserver<skylog::appender::LoggerMessage> >
+  std::shared_ptr<skylog::base::IObserver<skylog::message::LogMessage> >
       console_appender = std::make_shared<skylog::appender::ConsoleAppender>();
 
   std::shared_ptr<skylog::base::IObservable<
-      skylog::base::IObserver<skylog::appender::LoggerMessage> > > observable =
+      skylog::base::IObserver<skylog::message::LogMessage> > > observable =
       std::make_shared<skylog::base::Observable<
-          skylog::base::IObserver<skylog::appender::LoggerMessage> > >();
+          skylog::base::IObserver<skylog::message::LogMessage> > >();
   observable->AddObserver("FileAppender", file_appender);
   observable->AddObserver("ConsoleAppender", console_appender);
 
   observable->NotifyObservers(
-      skylog::appender::LoggerMessage(skylog::appender::LogLevel::LL_DEBUG,
-                                      std::chrono::system_clock::now(),
-                                      13,
-                                      "test_file.cc",
-                                      "TestFunction",
-                                      167,
-                                      "Hello, world!!!"));
+      skylog::message::LogMessage(skylog::message::LogLevel::LL_DEBUG,
+                                  std::chrono::system_clock::now(),
+                                  13,
+                                  "test_file.cc",
+                                  "TestFunction",
+                                  167,
+                                  "Hello, world!!!"));
 
   return 0;
 }
