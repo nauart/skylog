@@ -24,24 +24,25 @@
 #include <string>
 #include <chrono>
 
-#include "base/observable.h"
 #include "message/log_message.h"
+#include "base/observable.h"
 #include "appender/file_appender.h"
 #include "appender/console_appender.h"
 
 int main() {
-  std::shared_ptr<skylog::base::IObserver<skylog::message::LogMessage> >
-      file_appender =
-          std::make_shared<skylog::appender::FileAppender>("test_file.txt");
-  std::shared_ptr<skylog::base::IObserver<skylog::message::LogMessage> >
-      console_appender = std::make_shared<skylog::appender::ConsoleAppender>();
-
   std::shared_ptr<skylog::base::IObservable<
       skylog::base::IObserver<skylog::message::LogMessage> > > observable =
       std::make_shared<skylog::base::Observable<
           skylog::base::IObserver<skylog::message::LogMessage> > >();
-  observable->AddObserver("FileAppender", file_appender);
-  observable->AddObserver("ConsoleAppender", console_appender);
+
+  observable->AddObserver(
+      "FileAppender",
+      std::unique_ptr<skylog::base::IObserver<skylog::message::LogMessage> >(
+          new skylog::appender::FileAppender("test_file.txt")));
+  observable->AddObserver(
+      "ConsoleAppender",
+      std::unique_ptr<skylog::base::IObserver<skylog::message::LogMessage> >(
+          new skylog::appender::ConsoleAppender()));
 
   observable->NotifyObservers(
       skylog::message::LogMessage(skylog::message::LogLevel::LL_DEBUG,
