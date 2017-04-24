@@ -31,11 +31,13 @@ set(SOURCES
   src/main.cc
   src/appender/file_appender.cc
   src/appender/console_appender.cc
+  src/appender/socket_appender.cc
 )
 
 set(LIBRARIES
   boost_system
   boost_thread
+  pthread
 )
 
 add_executable(skylog ${SOURCES})
