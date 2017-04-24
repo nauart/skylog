@@ -42,9 +42,9 @@ class Observable : public IObservable<ObserverType> {
   Observable(Observable&&) = default;
   Observable& operator=(Observable&&) = default;
 
-  bool AddObserver(const std::string& name, ObserverPointer observer) final {
+  bool AddObserver(const std::string& name, ObserverPointer&& observer) final {
     std::unique_lock<std::mutex> lock(observers_map_mutex_);
-    return observers_map_.emplace(name, observer).second;
+    return observers_map_.emplace(name, std::move(observer)).second;
   }
   void RemoveObserver(const std::string& name) final {
     std::unique_lock<std::mutex> lock(observers_map_mutex_);

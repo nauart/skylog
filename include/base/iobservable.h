@@ -32,12 +32,12 @@ template <typename ObserverType>
 class IObservable {
  public:
   using ObserverMessage = typename ObserverType::ObserverMessage;
-  using ObserverPointer = std::shared_ptr<ObserverType>;
+  using ObserverPointer = std::unique_ptr<ObserverType>;
 
   virtual ~IObservable() {}
 
   virtual bool AddObserver(const std::string& name,
-                           ObserverPointer observer) = 0;
+                           ObserverPointer&& observer) = 0;
   virtual void RemoveObserver(const std::string& name) = 0;
   virtual void NotifyObservers(const ObserverMessage& message) = 0;
 };
