@@ -28,6 +28,7 @@
 #include "base/observable.h"
 #include "appender/file_appender.h"
 #include "appender/console_appender.h"
+#include "appender/socket_appender.h"
 
 int main() {
   std::shared_ptr<skylog::base::IObservable<
@@ -43,6 +44,10 @@ int main() {
       "ConsoleAppender",
       std::unique_ptr<skylog::base::IObserver<skylog::message::LogMessage> >(
           new skylog::appender::ConsoleAppender()));
+  observable->AddObserver(
+      "SocketAppender",
+      std::unique_ptr<skylog::base::IObserver<skylog::message::LogMessage> >(
+          new skylog::appender::SocketAppender("127.0.0.1", "6666")));
 
   observable->NotifyObservers(std::make_shared<skylog::message::LogMessage>(
       skylog::message::LogLevel::LL_DEBUG,
