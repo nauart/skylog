@@ -34,8 +34,9 @@ namespace appender {
 class FileAppender : public base::Observer<message::LogMessage>,
                      public base::Observer<message::LogMessage>::Handler {
  public:
-  using AppenderMessage =
-      typename base::Observer<message::LogMessage>::ObserverMessage;
+  using BaseObserver = base::Observer<message::LogMessage>;
+  using AppenderMessagePointer =
+      typename base::Observer<message::LogMessage>::ObserverMessagePointer;
 
   explicit FileAppender(const std::string& file_path);
   ~FileAppender();
@@ -44,7 +45,7 @@ class FileAppender : public base::Observer<message::LogMessage>,
   FileAppender& operator=(FileAppender&&) = default;
 
  private:
-  void Handle(const AppenderMessage& message) final;
+  void Handle(const AppenderMessagePointer& message) final;
 
   std::ofstream file_stream_;
 };

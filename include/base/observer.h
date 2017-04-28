@@ -37,14 +37,14 @@ namespace base {
 template <typename ObserverMessageType>
 class Observer : public IObserver<ObserverMessageType> {
  public:
-  using ObserverMessage =
-      typename IObserver<ObserverMessageType>::ObserverMessage;
+  using ObserverMessagePointer =
+      typename IObserver<ObserverMessageType>::ObserverMessagePointer;
 
   class Handler {
    public:
     virtual ~Handler() {}
 
-    virtual void Handle(const ObserverMessage& message) = 0;
+    virtual void Handle(const ObserverMessagePointer& message) = 0;
   };
 
   explicit Observer(Handler* handler)
@@ -61,7 +61,7 @@ class Observer : public IObserver<ObserverMessageType> {
   Observer(Observer&&) = default;
   Observer& operator=(Observer&&) = default;
 
-  void Notify(const ObserverMessage& message) final {
+  void Notify(const ObserverMessagePointer& message) final {
     if (is_running_) {
       service_.post(boost::bind(&Handler::Handle, handler_, message));
     }

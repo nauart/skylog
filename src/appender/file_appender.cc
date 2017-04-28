@@ -29,28 +29,29 @@
 #include "base/observer.h"
 
 skylog::appender::FileAppender::FileAppender(const std::string& file_path)
-    : base::Observer<AppenderMessage>(this), file_stream_(file_path) {}
+    : BaseObserver(this), file_stream_(file_path) {}
 
 skylog::appender::FileAppender::~FileAppender() {
-  base::Observer<AppenderMessage>::Stop();
+  BaseObserver::Stop();
 }
 
-void skylog::appender::FileAppender::Handle(const AppenderMessage& message) {
+void skylog::appender::FileAppender::Handle(
+    const AppenderMessagePointer& message) {
   if (!file_stream_.is_open()) {
     return;
   }
 
   const std::time_t time_stamp =
-      std::chrono::system_clock::to_time_t(message.time());
+      std::chrono::system_clock::to_time_t(message->time());
   const std::size_t time_buffer_size = 50;
   char time_buffer[time_buffer_size];
   std::strftime(
       time_buffer, time_buffer_size, "%x %X", std::localtime(&time_stamp));
 
-  file_stream_ << message.level_string() << " [" << time_buffer << "] ["
-               << "0x" << std::hex << message.thread_id() << "] "
-               << message.file_name() << " " << message.function_name()
-               << "::" << std::dec << message.line_number() << ": "
-               << message.log_string() << "\n";
+  file_stream_ << message->level_string() << " [" << time_buffer << "] ["
+               << "0x" << std::hex << message->thread_id() << "] "
+               << message->file_name() << " " << message->function_name()
+               << "::" << std::dec << message->line_number() << ": "
+               << message->log_string() << "\n";
   file_stream_.flush();
 }
