@@ -31,7 +31,7 @@ namespace base {
 template <typename ObserverType>
 class IObservable {
  public:
-  using ObserverMessage = typename ObserverType::ObserverMessage;
+  using ObserverMessagePointer = typename ObserverType::ObserverMessagePointer;
   using ObserverPointer = std::unique_ptr<ObserverType>;
 
   virtual ~IObservable() {}
@@ -39,7 +39,7 @@ class IObservable {
   virtual bool AddObserver(const std::string& name,
                            ObserverPointer&& observer) = 0;
   virtual void RemoveObserver(const std::string& name) = 0;
-  virtual void NotifyObservers(const ObserverMessage& message) = 0;
+  virtual void NotifyObservers(const ObserverMessagePointer& message) = 0;
 };
 
 }  // namespace base

@@ -34,7 +34,8 @@ namespace base {
 template <typename ObserverType>
 class Observable : public IObservable<ObserverType> {
  public:
-  using ObserverMessage = typename IObservable<ObserverType>::ObserverMessage;
+  using ObserverMessagePointer =
+      typename IObservable<ObserverType>::ObserverMessagePointer;
   using ObserverPointer = typename IObservable<ObserverType>::ObserverPointer;
 
   Observable() = default;
@@ -50,7 +51,7 @@ class Observable : public IObservable<ObserverType> {
     std::unique_lock<std::mutex> lock(observers_map_mutex_);
     observers_map_.erase(name);
   }
-  void NotifyObservers(const ObserverMessage& message) final {
+  void NotifyObservers(const ObserverMessagePointer& message) final {
     std::unique_lock<std::mutex> lock(observers_map_mutex_);
     for (auto& kv : observers_map_) {
       kv.second->Notify(message);

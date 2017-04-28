@@ -31,8 +31,9 @@ namespace appender {
 class ConsoleAppender : public base::Observer<message::LogMessage>,
                         public base::Observer<message::LogMessage>::Handler {
  public:
-  using AppenderMessage =
-      typename base::Observer<message::LogMessage>::ObserverMessage;
+  using BaseObserver = base::Observer<message::LogMessage>;
+  using AppenderMessagePointer =
+      typename base::Observer<message::LogMessage>::ObserverMessagePointer;
 
   ConsoleAppender();
   ~ConsoleAppender();
@@ -41,7 +42,7 @@ class ConsoleAppender : public base::Observer<message::LogMessage>,
   ConsoleAppender& operator=(ConsoleAppender&&) = default;
 
  private:
-  void Handle(const AppenderMessage& message) final;
+  void Handle(const AppenderMessagePointer& message) final;
 };
 
 }  // namespace appender
