@@ -44,14 +44,14 @@ int main() {
       std::unique_ptr<skylog::base::IObserver<skylog::message::LogMessage> >(
           new skylog::appender::ConsoleAppender()));
 
-  observable->NotifyObservers(
-      skylog::message::LogMessage(skylog::message::LogLevel::LL_DEBUG,
-                                  std::chrono::system_clock::now(),
-                                  13,
-                                  "test_file.cc",
-                                  "TestFunction",
-                                  167,
-                                  "Hello, world!!!"));
+  observable->NotifyObservers(std::make_shared<skylog::message::LogMessage>(
+      skylog::message::LogLevel::LL_DEBUG,
+      std::chrono::system_clock::now(),
+      13,
+      "test_file.cc",
+      "TestFunction",
+      167,
+      "Hello, world!!!"));
 
   return 0;
 }
