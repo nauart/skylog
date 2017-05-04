@@ -24,15 +24,22 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
 #include <chrono>
 
 #include "base/observer.h"
 
 skylog::appender::FileAppender::FileAppender(const std::string& file_path)
-    : BaseObserver(this), file_stream_(file_path) {}
+    : BaseObserver(this), file_stream_() {
+  file_stream_.open(file_path, std::fstream::out);
+  if (file_stream_.fail()) {
+    std::cerr << "File appender cannot open file: " << file_path << "\n";
+  }
+}
 
 skylog::appender::FileAppender::~FileAppender() {
   BaseObserver::Stop();
+  file_stream_.close();
 }
 
 void skylog::appender::FileAppender::Handle(

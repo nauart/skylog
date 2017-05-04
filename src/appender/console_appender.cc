@@ -43,10 +43,10 @@ void skylog::appender::ConsoleAppender::Handle(
   std::strftime(
       time_buffer, time_buffer_size, "%x %X", std::localtime(&time_stamp));
 
-  std::cout << message->level_string() << " [" << time_buffer << "] ["
+  std::clog << message->level_string() << " [" << time_buffer << "] ["
             << "0x" << std::hex << message->thread_id() << "] "
             << message->file_name() << " " << message->function_name()
             << "::" << std::dec << message->line_number() << ": "
             << message->log_string() << "\n";
-  std::cout << std::flush;
+  std::clog << std::flush;
 }
