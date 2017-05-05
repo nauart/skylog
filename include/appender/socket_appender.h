@@ -20,33 +20,40 @@
  * SOFTWARE.
  */
 
-#include "appender/console_appender.h"
+#pragma once
 
 #include <string>
-#include <iostream>
-#include <chrono>
+
+#include <boost/asio.hpp>
 
 #include "base/observer.h"
+#include "message/log_message.h"
 
-skylog::appender::ConsoleAppender::ConsoleAppender() : BaseObserver(this) {}
+namespace skylog {
+namespace appender {
 
-skylog::appender::ConsoleAppender::~ConsoleAppender() {
-  BaseObserver::Stop();
-}
+class SocketAppender : public base::Observer<message::LogMessage>,
+                       public base::Observer<message::LogMessage>::Handler {
+ public:
+  using BaseObserver = base::Observer<message::LogMessage>;
+  using AppenderMessagePointer =
+      typename base::Observer<message::LogMessage>::ObserverMessagePointer;
 
-void skylog::appender::ConsoleAppender::Handle(
-    const AppenderMessagePointer& message) {
-  const std::time_t time_stamp =
-      std::chrono::system_clock::to_time_t(message->time());
-  const std::size_t time_buffer_size = 50;
-  char time_buffer[time_buffer_size];
-  std::strftime(
-      time_buffer, time_buffer_size, "%x %X", std::localtime(&time_stamp));
+  SocketAppender(const std::string& address, const std::string& service_name);
+  ~SocketAppender();
 
-  std::clog << message->level_string() << " [" << time_buffer << "] ["
-            << "0x" << std::hex << message->thread_id() << "] "
-            << message->file_name() << " " << message->function_name()
-            << "::" << std::dec << message->line_number() << ": "
-            << message->log_string() << "\n";
-  std::clog << std::flush;
-}
+  SocketAppender(SocketAppender&&) = default;
+  SocketAppender& operator=(SocketAppender&&) = default;
+
+ private:
+  void Handle(const AppenderMessagePointer& message) final;
+
+  void Connect(const std::string& address, const std::string& service_name);
+  void Disconnect();
+
+  boost::asio::io_service service_;
+  boost::asio::ip::tcp::socket socket_;
+};
+
+}  // namespace appender
+}  // namespace skylog
